@@ -1,7 +1,5 @@
-altair
-numpy
-pandas
-pydeck
-streamlit
-matplotlib
-qrcode
+altair==5.1.2
+numpy==1.26.2
+streamlit==1.28.2
+matplotlib==3.8.1
+qrcode==7.4.2
