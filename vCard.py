@@ -30,7 +30,7 @@ def generate_vcard_qr_code(last_name, first_name, display_name, organization, ur
         vcard_data += f"URL:{url}\n"
 
     for email in emails:
-        vcard_data += f"EMAIL:{email}\n"
+        vcard_data += f"Email:{email}\n"
 
     vcard_data += f"TEL;TYPE=mobile:{format_phone_number(phone, 'Work')}\n" \
                   f"ADR;TYPE=intl,work,postal,parcel:;;{address}\n" \
@@ -62,19 +62,18 @@ def main():
     first_name = st.text_input('First Name:')
     display_name = st.text_input('Display Name:')
     organization = st.text_input('Organization:')
+
     phone = st.text_input('Mobile:')
-
-
     
-    urls = st.text_area('URLs (separate by commas):').split(',')
     emails = st.text_area('Emails (separate by commas):').split(',')
     
+    urls = st.text_area('URLs (separate by commas):').split(',')
     address = st.text_input('Address:')
 
     notes = st.text_area('Notes:')
 
     if st.button('Generate QR Code'):
-        generate_vcard_qr_code(last_name, first_name, display_name, organization, urls, emails, phone, address, notes)
+        generate_vcard_qr_code(last_name, first_name, display_name, phone, emails, organization, urls, address, notes)
 
 if __name__ == '__main__':
     main()
