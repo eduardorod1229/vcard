@@ -31,7 +31,7 @@ def generate_vcard_qr_code(last_name, first_name, display_name, organization, ur
                   f"NOTE:{notes}\n" \
                   f"END:VCARD"
 
-     for email in emails:
+    for email in emails:
         vcard_data += f"EMAIL:{email}\n"
     
     for url in urls:
