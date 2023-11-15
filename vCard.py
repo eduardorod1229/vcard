@@ -13,72 +13,66 @@
 # limitations under the License.
 
 import streamlit as st
-import qrcode
+import segno
 from io import BytesIO
-import matplotlib.pyplot as plt
-
 
 def format_phone_number(phone, phone_type):
-    return f"+{phone}" if phone_type == 'Mobile' else f"{phone}"
+    return f"({phone[:3]}) {phone[3:6]}-{phone[6:]}"
 
-def generate_vcard_qr_code(name, organization, job_title,cellphone, office_phone, emails, websites):
+def generate_vcard_qr_code(last_name, first_name, display_name, organization, urls, emails, phone, address, notes):
     vcard_data = f"BEGIN:VCARD\n" \
                  f"VERSION:3.0\n" \
-                 f"FN:{name}\n" \
-                 f"ORG:{organization}\n" \
-                 f"TITLE:{job_title}\n" \
-                 f"TEL;TYPE=CELL:{format_phone_number(cellphone, 'Mobile')}\n" \
-                 f"TEL;TYPE=WORK:{format_phone_number(office_phone, 'Work')}\n"
+                 f"N:{last_name};{first_name}\n" \
+                 f"FN:{display_name}\n" \
+                 f"ORG:{organization}\n"
+
+    for url in urls:
+        vcard_data += f"URL:{url}\n"
 
     for email in emails:
         vcard_data += f"EMAIL:{email}\n"
 
-    for website in websites:
-        vcard_data += f"URL:{website}\n"
+    vcard_data += f"TEL;TYPE=mobile:{format_phone_number(phone, 'Work')}\n" \
+                  f"ADR;TYPE=intl,work,postal,parcel:;;{address}\n" \
+                  f"NOTE:{notes}\n" \
+                  f"END:VCARD"
 
-    vcard_data += "END:VCARD"
+    # Generate QR code using segno
+    qr = segno.make(vcard_data)
 
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=6,
-        border=4,
-    )
-
-    qr.add_data(vcard_data)
-    qr.make(fit=True)
-
-    pil_image = qr.make_image(fill_color="black", back_color="white")
-
-
+  
     img_bytes = BytesIO()
-    pil_image.save(img_bytes, format='PNG')
-    img_bytes.seek(0)
+    qr.save(img_bytes, kind='png', scale=5)
 
     # Display the image using st.image
     st.image(img_bytes, caption='VCard', width=250)
 
+    # Download button
     st.download_button(
         label='Download QR Code',
         data=img_bytes.getvalue(),
-        file_name = 'vCard_qr_code.png',
-        mime='image/png')
+        file_name='vCard_qr_code.png',
+        mime='image/png'
+    )
 
 def main():
     st.title('vCard QR Code Generator')
 
-    name = st.text_input('Name:')
+    last_name = st.text_input('Last Name:')
+    first_name = st.text_input('First Name:')
+    display_name = st.text_input('Display Name:')
     organization = st.text_input('Organization:')
-    job_title = st.text_input('Job Title:')
     
-    cellphone = st.text_input('Mobile:')
-    office_phone = st.text_input('Work Phone:')
-
+    urls = st.text_area('URLs (separate by commas):').split(',')
     emails = st.text_area('Emails (separate by commas):').split(',')
-    websites = st.text_area('Websites (separate by commas):').split(',')
+    
+    phone = st.text_input('Mobile:')
+    address = st.text_input('Address:')
+
+    notes = st.text_area('Notes:')
 
     if st.button('Generate QR Code'):
-        generate_vcard_qr_code(name, organization, job_title, cellphone, office_phone, emails, websites)
+        generate_vcard_qr_code(last_name, first_name, display_name, organization, urls, emails, phone, address, notes)
 
 if __name__ == '__main__':
     main()
