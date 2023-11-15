@@ -25,18 +25,19 @@ def generate_vcard_qr_code(last_name, first_name, display_name, organization, ur
                  f"N:{last_name};{first_name}\n" \
                  f"FN:{display_name}\n" \
                  f"ORG:{organization}\n"
-
-    for url in urls:
-        vcard_data += f"URL:{url}\n"
-
-    for email in emails:
-        vcard_data += f"EMAIL:{email}\n"
-
+    
     vcard_data += f"TEL;TYPE=mobile:{format_phone_number(phone, 'Work')}\n" \
                   f"ADR;TYPE=intl,work,postal,parcel:;;{address}\n" \
                   f"NOTE:{notes}\n" \
                   f"END:VCARD"
 
+     for email in emails:
+        vcard_data += f"EMAIL:{email}\n"
+    
+    for url in urls:
+        vcard_data += f"URL:{url}\n"
+
+   
     # Generate QR code using segno
     qr = segno.make(vcard_data)
 
@@ -62,13 +63,10 @@ def main():
     first_name = st.text_input('First Name:')
     display_name = st.text_input('Display Name:')
     organization = st.text_input('Organization:')
-    
-    urls = st.text_area('URLs (separate by commas):').split(',')
-    emails = st.text_area('Emails (separate by commas):').split(',')
-    
     phone = st.text_input('Mobile:')
+    emails = st.text_area('Emails (separate by commas):').split(',')
     address = st.text_input('Address:')
-
+    urls = st.text_area('URLs (separate by commas):').split(',')
     notes = st.text_area('Notes:')
 
     if st.button('Generate QR Code'):
