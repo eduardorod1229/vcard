@@ -40,7 +40,6 @@ def generate_vcard_qr_code(last_name, first_name, display_name, organization, ur
     # Generate QR code using segno
     qr = segno.make(vcard_data)
 
-  
     img_bytes = BytesIO()
     qr.save(img_bytes, kind='png', scale=5)
 
@@ -62,18 +61,14 @@ def main():
     first_name = st.text_input('First Name:')
     display_name = st.text_input('Display Name:')
     organization = st.text_input('Organization:')
-
     phone = st.text_input('Mobile:')
-    
     emails = st.text_area('Emails (separate by commas):').split(',')
-    
     urls = st.text_area('URLs (separate by commas):').split(',')
     address = st.text_input('Address:')
-
     notes = st.text_area('Notes:')
 
     if st.button('Generate QR Code'):
-        generate_vcard_qr_code(last_name, first_name, display_name, phone, emails, organization, urls, address, notes)
+        generate_vcard_qr_code(last_name, first_name, display_name, organization, urls, emails, phone, address, notes)
 
 if __name__ == '__main__':
     main()
