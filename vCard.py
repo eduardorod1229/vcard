@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import streamlit as st
-import segno
-from io import BytesIO
-
-def format_phone_number(phone, phone_type):
-    return f"({phone[:3]}) {phone[3:6]}-{phone[6:]}"
-
 def generate_vcard_qr_code(last_name, first_name, display_name, organization, urls, emails, phone, address, notes):
     vcard_data = f"BEGIN:VCARD\n" \
                  f"VERSION:3.0\n" \
@@ -27,14 +20,15 @@ def generate_vcard_qr_code(last_name, first_name, display_name, organization, ur
                  f"ORG:{organization}\n" \
                  f"TEL;TYPE=mobile:{format_phone_number(phone, 'Work')}\n" \
                  f"ADR;TYPE=intl,work,postal,parcel:;;{address}\n" \
-                 f"NOTE:{notes}\n" \
-                 f"END:VCARD"
+                 f"NOTE:{notes}\n"
 
     for email in emails:
         vcard_data += f"EMAIL:{email}\n"
     
     for url in urls:
         vcard_data += f"URL:{url}\n"
+
+    vcard_data += "END:VCARD"
 
     # Generate QR code using segno
     qr = segno.make(vcard_data)
@@ -52,6 +46,7 @@ def generate_vcard_qr_code(last_name, first_name, display_name, organization, ur
         file_name='vCard_qr_code.png',
         mime='image/png'
     )
+
 
 def main():
     st.title('vCard QR Code Generator')
